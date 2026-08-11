@@ -30,25 +30,28 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install wheel
-          # Compiles PyInstaller bootloader from source to help bypass false-positive antivirus triggers
-          pip install --no-binary pyinstaller pyinstaller
           if (Test-Path "requirements.txt") { pip install -r requirements.txt }
 
-      - name: Build EXE with PyInstaller
-        run: |
-          pyinstaller --onefile --noconsole --noupx --name "eq_persona_hotbar_fixer" main.py
+      - name: Build Executable with Nuitka
+        uses: Nuitka/Nuitka-Action@main
+        with:
+          nuitka-version: main
+          script-name: main.py
+          onefile: true
+          mode: onefile
+          windows-disable-console: true
+          output-filename: eq_persona_hotbar_fixer.exe
 
       - name: Upload EXE Artifact
         uses: actions/upload-artifact@v4
         with:
           name: eq_persona_hotbar_fixer-windows
-          path: dist/*.exe
+          path: build/eq_persona_hotbar_fixer.exe
 
       - name: Create Release and Attach EXE (On Version Tags)
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/*.exe
+          files: build/eq_persona_hotbar_fixer.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
