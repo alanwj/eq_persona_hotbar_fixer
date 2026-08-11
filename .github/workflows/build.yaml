@@ -37,8 +37,8 @@ jobs:
         with:
           nuitka-version: main
           script-name: main.py
-          onefile: false
           mode: onefile
+          enable-plugins: tk-inter
           windows-disable-console: true
           output-filename: eq_persona_hotbar_fixer.exe
 
